@@ -26,10 +26,10 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Build VitePress site
-        run: npm run docs:build
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
