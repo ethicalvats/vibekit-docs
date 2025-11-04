@@ -36,6 +36,7 @@ module.exports = async () => {
           }
         ]
       }
-    }
+    },
+    base: "/vibekit-docs/"
   })
 }
