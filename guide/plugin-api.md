@@ -35,6 +35,86 @@ Here are the fields for the `plugin.json` file:
 *   **`library`** (String, optional): The name of the compiled dynamic library file (e.g., `libMyPlugin.dylib`). If not provided, Vibekit will attempt to find it based on the product name.
 *   **`config`** (Object, optional): A dictionary of key-value pairs that provide default configuration for your plugin. This configuration is passed to your plugin's entry point in the `PluginContext` and can be used to control its behavior.
 
+## Contributing to the Spec
+
+In addition to the `plugin.json` manifest, each plugin directory must contain a `vibespec.md` file. This file allows a plugin to define its own Things, Events, and States, which are then merged with the main application's spec at runtime. If a plugin directory does not contain a `vibespec.md` file, it will be skipped.
+
+The merging logic is as follows:
+- **Things**: New `Thing` definitions are added. If a `Thing` with the same name already exists in the main spec, its fields will be extended with the fields from the plugin's spec.
+- **Events**: New `Event` definitions are added.
+- **States**: New `State` definitions are added. If a `State` with the same name already exists, its states and transitions will be extended.
+
+This powerful feature allows plugins to extend the application's data model, enabling a wide range of new functionalities.
+
+## Real-World Example: A Comments Plugin
+
+To illustrate how this works in practice, let's consider a simple blog application. The core application only has `Post`s, but we want to add a commenting system. We can achieve this by creating a `Comments` plugin that contributes the necessary `Comment` Thing and its related `Event`.
+
+First, here is the `vibespec.md` for the main application:
+
+```markdown
+Thing Post {
+  id: UUID @identity
+  title: String @required
+  body: Text @required
+}
+
+Event Post.created {
+  id: UUID,
+  title: String,
+  body: Text
+}
+```
+
+Next, we create a `Comments` plugin. In the plugin's directory, we add a `vibespec.md` file with the following content:
+
+```markdown
+Thing Comment {
+  id: UUID @identity
+  postId: UUID @relation(Post) @required
+  author: String @required
+  body: Text @required
+}
+
+Event Comment.created {
+  id: UUID,
+  postId: UUID,
+  author: String,
+  body: Text
+}
+```
+
+When the application starts, it will load the `Comments` plugin and merge its `vibespec.md` with the main application's spec. The resulting, merged spec will look like this:
+
+```markdown
+Thing Post {
+  id: UUID @identity
+  title: String @required
+  body: Text @required
+}
+
+Thing Comment {
+  id: UUID @identity
+  postId: UUID @relation(Post) @required
+  author: String @required
+  body: Text @required
+}
+
+Event Post.created {
+  id: UUID,
+  title: String,
+  body: Text
+}
+
+Event Comment.created {
+  id: UUID,
+  postId: UUID,
+  author: String,
+  body: Text
+}
+```
+
+As you can see, the `Comment` Thing and `Comment.created` Event from the plugin have been seamlessly added to the application's data model. This approach is incredibly powerful because it allows you to encapsulate features into self-contained plugins. You can add or remove major functionalities like commenting, user profiles, or e-commerce features simply by adding or removing a plugin, without ever having to modify the core application's code.
 
 ## Example Plugin
 

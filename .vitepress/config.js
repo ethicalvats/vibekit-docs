@@ -33,6 +33,14 @@ module.exports = async () => {
               { text: 'Runtime', link: '/guide/runtime' },
               { text: 'Deployment', link: '/guide/deployment' }
             ]
+          },
+          {
+            text: 'Use Cases',
+            items: [
+              { text: 'Basic', link: '/guide/basic-use-cases' },
+              { text: 'Advanced', link: '/guide/advanced-use-cases' },
+              { text: 'Limitations', link: '/guide/limitations'}
+            ]
           }
         ]
       }
